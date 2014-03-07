@@ -101,20 +101,47 @@
               </plugin>
 
             <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+                                <copy file="${basedir}/src/main/webapp/diabeticlog.appcache.tpl"
+                                      tofile="${project.build.directory}/generated-sources/diabeticlog-${buildNumber}.appcache" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
-                    <archiveClasses>true</archiveClasses>
                     <webXml>${project.build.directory}/generated-sources/appengine-endpoints/WEB-INF/web.xml</webXml>
+                    <archiveClasses>true</archiveClasses>
                     <webResources>
                         <resource>
-                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                            <directory>${basedir}/src/main/webapp</directory>
                             <filtering>true</filtering>
-                            <targetPath>WEB-INF</targetPath>
+                            <targetPath></targetPath>
                             <excludes>
-                                <exclude>web.xml</exclude>
+                                <exclude>WEB-INF/web.xml</exclude>
+                                <exclude>diabeticlog.appcache</exclude>
                             </excludes>
+                        </resource>
+                        <resource>
+                            <directory>${project.build.directory}/generated-sources</directory>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>*.appcache</include>
+                            </includes>
                         </resource>
                         <resource>
                             <!-- this is relative to the pom.xml directory -->
