@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Api Test</title>
+    <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="js/diabeticlog.api.js"></script>
+    <script type="text/javascript" src="js/syncapi.js"></script>
+
+    <script type="text/javascript">
+        function init() {
+            diabeticlog.initApi(function() {
+                console.log("API initialized");
+                signedIn();
+            });
+        }
+        var syncApi = diabeticlog.syncApi;
+
+        function signin() {
+            if (diabeticlog.isSignedIn()) {
+                diabeticlog.logout();
+                signedIn();
+            } else {
+                diabeticlog.authorize(signedIn);
+            }
+        }
+
+        function signedIn() {
+            if (diabeticlog.isSignedIn()) {
+                $('#signin').html("Signout (" + diabeticlog.getUserinfo().name + ")");
+            } else {
+                $('#signin').html("Signin");
+            }
+        }
+
+
+        $(document).ready(function() {
+
+            $('#signin').click(signin);
+
+            $("#getVersion").click(function() {
+                syncApi.getVersion(function(response) {
+                    if (!response.code) {
+                        alert(response);
+                    }
+                });
+            });
+
+            $("#getUsername").click(function() {
+                diabeticlog.syncApi.getUsername(function(response) {
+                    alert(response);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <script src="https://apis.google.com/js/client.js?onload=init"></script>
+
+    <a href="#" id="signin">Signin</a><br/><br/>
+    <a href="#" id="getVersion">getVersion</a><br/>
+    <a href="#" id="getUsername">getUsername</a>
+</body>
+</html>
