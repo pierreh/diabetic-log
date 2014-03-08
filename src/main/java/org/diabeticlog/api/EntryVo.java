@@ -4,6 +4,14 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class EntryVo {
+
+   public static final String ENTITY_KIND = "DayEntry";
+   public static final String PROPERTY_TIME = "time";
+   public static final String PROPERTY_GLUCOSE = "glucose";
+   public static final String PROPERTY_ACTRAPID = "insuline1";
+   public static final String PROPERTY_INSULATARD = "insuline2";
+   public static final String PROPERTY_COMMENTS = "comments";
+
    private String time;
    private BigDecimal glucose;
    private BigDecimal actrapid;

@@ -4,6 +4,7 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.Named;
 import com.google.appengine.api.oauth.OAuthRequestException;
 import com.google.appengine.api.users.User;
+import model.ModelStore;
 
 @Api(
       name = Constants.API_NAME,
@@ -13,7 +14,13 @@ import com.google.appengine.api.users.User;
 )
 public class SyncApi {
 
-   public ResultVo updateDay(DayVo day) {
+   private ModelStore modelStore;
+
+   public ResultVo updateDay(DayVo day, User user) throws OAuthRequestException {
+      if (user == null) {
+         throw new OAuthRequestException("not logged in");
+      }
+      modelStore.storeDay(day, user);
       return new ResultVo();
    }
 
