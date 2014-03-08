@@ -33,12 +33,18 @@
 
     };
 
+    dl.isApiInitialized = function() {
+        return (typeof gapi.client.dl !== 'undefined');
+    }
+
     function userSignedIn(callback) {
         var request = gapi.client.oauth2.userinfo.get().execute(function(resp) {
             if (!resp.code) {
                 console.debug('signed in with user ' + resp.name);
                 signedIn = true;
                 userInfo = resp.result;
+            } else {
+                console.debug('not logged in');
             }
             if (callback) {
                 callback();

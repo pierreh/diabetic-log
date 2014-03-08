@@ -16,18 +16,49 @@
   <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
   
   <script type="text/javascript">
+
+    function gapiInit() {
+      diabeticlog.initApi(function() {
+          console.log("API initialized");
+          if (diabeticlog.isSignedIn()) {
+            signedIn(diabeticlog.getUserinfo());
+          } else {
+            signedOut();
+          }
+      });
+    }
+
+    function signedIn(userinfo) {
+        $('#userinfo')
+            .html(userinfo.name)
+            .show();
+        $('#signin').hide();
+    }
+
+    function signedOut() {
+        $('#userinfo').hide('');
+        $('#signin').show();
+    }
+
+    function authorize() {
+        diabeticlog.authorize(function() {
+           if (diabeticlog.isSignedIn()) {
+               signedIn(diabeticlog.getUserinfo());
+           } else {
+               signedOut();
+           }
+        });
+    }
     
     $( document ).on( "mobileinit", function(){
       //$.mobile.page.prototype.options.degradeInputs.date = true; // do this when using the datepicker component
       //$.mobile.page.prototype.options.degradeInputs.time = true;
       //$.mobile.page.prototype.options.degradeInputs.number = true;
-      setTimeout(function(){
-        // Hide the address bar!
-        window.scrollTo(0, 1);
-      }, 0);
     });
     
     $(document).ready(function() {
+
+      signedOut();
 
       var currentInput = null;
 
@@ -44,20 +75,22 @@
         $('#navbar').show();
       }
 
-      $('input[type="number"').click(function(e){
+      $('#n_keypad').find('a[data-role="button"]').css({display: 'block'});
+
+      $('input[type="number"]').click(function(e){
           currentInput = this;
           showKeypad();
       });
       $('.done').click(function(){
           hideKeypad();
       });
-      $('input[type="text"').click(function(){
+      $('input[type="text"]').click(function(){
           hideKeypad();
       });
       $('textarea').click(function(){
           hideKeypad();
       });
-      $('input[type="time"').click(function(){
+      $('input[type="time"]').click(function(){
           hideKeypad();
       });
 
@@ -96,14 +129,21 @@
         }
       });
 
+        setTimeout(function(){
+            // Hide the address bar!
+            window.scrollTo(0, 1);
+            var fileref=document.createElement('script')
+            fileref.setAttribute("type","text/javascript")
+            fileref.setAttribute("src", "https://apis.google.com/js/client.js?onload=gapiInit")
+            document.getElementsByTagName("body")[0].appendChild(fileref);
+        }, 0);
 
     });
   </script>
 
   <script type="text/javascript" src="js/jquery.mobile-1.4.1.min.js"></script>
   <script type="text/javascript" src="js/jquery.binddata.js"></script>
-         
- 
+
   <style>
         .center {
                 text-align: center;
@@ -124,7 +164,10 @@
         
   </style>
   
-  <script type="text/javascript" src="js/diabeticlog.js"></script>
+    <script type="text/javascript" src="js/diabeticlog.js"></script>
+    <script type="text/javascript" src="js/diabeticlog.api.js"></script>
+    <script type="text/javascript" src="js/diabeticlog.syncapi.js"></script>
+
 
   </head>
   <body>
@@ -165,7 +208,7 @@
                                 <label for="insulatard" class="ui-hidden-accessible">Insulatard</label>
                                 <input type='number' readonly="readonly" min="1" id="insulatard" name='insulatard' placeholder="Insulatard"/>
                                 <label for="comments" class="ui-hidden-accessible">Comments</label>
-                                <textarea id="comments" name='comments' placeholder="Comments" ></textarea>
+                                <textarea id="comments" name='comments' placeholder="Comments"></textarea>
                         </form>
 
                 </div><!-- /content -->
@@ -208,11 +251,15 @@
                         </ul>
                         </div>
                         <div id='footer-bottom' class="center">
-                                <span id="status"></span>&nbsp;&nbsp;<span id="version">v${project.version} (${buildNumber})</span>
+                                <span id="status"></span>&nbsp;&nbsp;
+                                <span id="version">v${project.version}-${buildNumber}</span>&nbsp;&nbsp;
+                                <span id="userinfo"></span>
+                                <span id="signin"><a href="#" onclick="authorize()">signin</a></span>
                         </div>
                 </div><!-- /footer -->
                 
         </div><!-- /page -->
+
         
   </body>
 </html>

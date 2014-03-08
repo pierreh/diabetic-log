@@ -28,5 +28,9 @@
         });
     }
 
+    api.updateDay = function(day, callback) {
+        getApi().updateDay(day).execute(callback);
+    }
+
 }(window,document))
 
