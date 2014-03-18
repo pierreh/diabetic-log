@@ -14,7 +14,7 @@ import model.ModelStore;
 )
 public class SyncApi {
 
-   private ModelStore modelStore;
+   private ModelStore modelStore = new ModelStore();
 
    public ResultVo updateDay(DayVo day, User user) throws OAuthRequestException {
       if (user == null) {
