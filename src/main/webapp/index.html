@@ -16,16 +16,22 @@
 
 
     <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
-    <!-- mobile init goes here if needed -->
+    <script type="text/javascript" src="js/mobileinit.js"></script>
     <script type="text/javascript" src="js/jquery.mobile-1.4.1.min.js"></script>
     <script type="text/javascript" src="js/jquery.binddata.js"></script>
     <script type="text/javascript" src="js/diabeticlog.js"></script>
+    <script type="text/javascript" src="js/diabeticlog.keypad.js"></script>
+    <script type="text/javascript" src="js/dl.entry.page.js"></script>
+    <script type="text/javascript" src="js/dl.day.class.js"></script>
     <script type="text/javascript" src="js/diabeticlog.api.js"></script>
     <script type="text/javascript" src="js/diabeticlog.syncapi.js"></script>
 
 
 </head>
 <body>
+
+
+<!-- ************* Data Entry Page *******************-->
 
 <div id="bmentry" data-role="page" data-theme="a">
 
@@ -116,6 +122,7 @@
             <span id="version">v${project.version}-${buildNumber}</span>&nbsp;&nbsp;
             <span id="userinfo"></span>
             <span id="signin"><a href="#">signin</a></span>
+            <span id="syncinfo">offline</span>
         </div>
     </div>
     <!-- /footer -->

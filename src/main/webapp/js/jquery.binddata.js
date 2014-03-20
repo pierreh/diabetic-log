@@ -168,7 +168,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 		if (updateHandler) {
 			updateHandler($(this), propname, value);
 		}
-        console.log(propname + ' changed: '+value);
     };
 
     var getTransformsForField = function(name, transforms) {

@@ -51,6 +51,14 @@
                 });
             });
 
+            $("#getUsername").on("testevent", function(){
+                alert("Received event");
+            })
+
+            $("#eventest").click(function() {
+                $("#getUsername").trigger("testevent");
+            });
+
 
         });
     </script>
@@ -62,5 +70,7 @@
     <a href="#" id="signin">Signin</a><br/><br/>
     <a href="#" id="getVersion">getVersion</a><br/>
     <a href="#" id="getUsername">getUsername</a>
+
+    <a href="#" id="eventest">Trigger</a>
 </body>
 </html>

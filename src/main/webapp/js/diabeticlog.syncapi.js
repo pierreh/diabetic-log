@@ -35,8 +35,8 @@
     updateSyncQueue(queue);
     console.log('key added to syncqueue: ' + key);
     console.log('nr keys in syncqueue: ' + nr);
+    // TODO send nr in queue event
   }
-
 
   var syncQueueKey = dl.appname + '.syncQueue';
   var activeSyncQueueKey = dl.appname + '.activeSyncQueue';
@@ -116,9 +116,13 @@
 
     var q = getActiveSyncQueue();
     if (q.length == 0) {
+      if (syncInProgress) {
+        // TODO send event
+      }
       syncInProgress = false;
       return;
     }
+    // TODO send nr in queue event
 
     var key = q[0];
     if (key in localStorage) {

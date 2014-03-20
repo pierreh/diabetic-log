@@ -17,6 +17,5 @@ temp-testng-customsuite.xml
 test-output
 .externalToolBuilders
 *~
-buildNumber.properties
 eclipse-launch-profiles/
 nbactions.xml
