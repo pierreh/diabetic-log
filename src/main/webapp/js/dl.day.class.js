@@ -178,7 +178,12 @@ Day.load = function (date) {
 //=======================================================================
 
 Date.prototype.toDateField = function () {
-  return this.toISOString().substr(0, 10);
+  var d = new Date(this.getTime());
+  d.setHours(12);
+  d.setMinutes(0);
+  d.setSeconds(0);
+  d.setMilliseconds(0);
+  return d.toISOString().substr(0, 10);
 }
 
 Date.prototype.toTimeField = function () {

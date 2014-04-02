@@ -4,8 +4,7 @@
 
   function showKeypad() {
     var p = $(currentInput).position();
-    $('#n_keypad')
-      .show('fast');
+    $('#n_keypad').show('fast');
   }
 
   function hideKeypad() {

@@ -11,17 +11,18 @@
     <link rel="icon" href="favicon.ico" sizes="16x16 32x32 64x64 128x128" type="image/vnd.microsoft.icon">
     <link href='dl-icon-114.png' rel='apple-touch-icon-precomposed'/>
 
-    <link rel="stylesheet" href="css/jquery.mobile-1.4.1.min.css"/>
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css"/>
     <link rel="stylesheet" href="css/diabeticlog.css"/>
 
 
     <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="js/mobileinit.js"></script>
-    <script type="text/javascript" src="js/jquery.mobile-1.4.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
     <script type="text/javascript" src="js/jquery.binddata.js"></script>
     <script type="text/javascript" src="js/diabeticlog.js"></script>
     <script type="text/javascript" src="js/diabeticlog.keypad.js"></script>
     <script type="text/javascript" src="js/dl.entry.page.js"></script>
+    <script type="text/javascript" src="js/dl.log.page.js"></script>
     <script type="text/javascript" src="js/dl.day.class.js"></script>
     <script type="text/javascript" src="js/diabeticlog.api.js"></script>
     <script type="text/javascript" src="js/diabeticlog.syncapi.js"></script>
@@ -36,10 +37,16 @@
 <div id="bmentry" data-role="page" data-theme="a">
 
     <div id="header" data-role="header" data-theme="a">
-        <a href="#" id="btn-earlier" data-icon="arrow-l">Earlier</a>
-
         <h1 id="entry-title"></h1>
-        <a href="#" id="btn-later" data-icon="arrow-r">Later</a>
+        <a href="#" id="btn-earlier" data-icon="arrow-l" class="ui-btn-left">Earlier</a>
+        <a href="#" id="btn-later" data-icon="arrow-r" class="ui-btn-right">Later</a>
+        <div data-role="navbar" data-iconpos="left">
+            <ul>
+                <li><a href="#bmentry" data-icon="edit" class="ui-btn-active ui-state-persist">Entry</a></li>
+                <li><a href="#bmlog" data-icon="bullets">Log</a></li>
+            </ul>
+        </div>
+
     </div>
     <!-- /header -->
 
@@ -84,48 +91,73 @@
 
         <table class="ui-bar-a" id="n_keypad" style="display: none; -khtml-user-select: none; width: 100%">
             <tr>
-                <td><a data-role="button" data-theme="b" class="digit">7</a></td>
-                <td><a data-role="button" data-theme="b" class="digit">8</a></td>
-                <td><a data-role="button" data-theme="b" class="digit">9</a></td>
-                <td><a data-role="button" data-theme="e" class="del">Del</a></td>
+                <td><a class="digit ui-link ui-btn ui-btn-b ui-shadow ui-corner-all">7</a></td>
+                <td><a class="digit ui-link ui-btn ui-btn-b ui-shadow ui-corner-all">8</a></td>
+                <td><a class="digit ui-link ui-btn ui-btn-b ui-shadow ui-corner-all">9</a></td>
+                <td><a class="del ui-link ui-btn ui-btn-e ui-shadow ui-corner-all">Del</a></td>
             </tr>
             <tr>
-                <td><a data-role="button" data-theme="b" class="digit">4</a></td>
-                <td><a data-role="button" data-theme="b" class="digit">5</a></td>
-                <td><a data-role="button" data-theme="b" class="digit">6</a></td>
-                <td><a data-role="button" data-theme="e" class="clear">Clear</a></td>
+                <td><a class="digit ui-link ui-btn ui-btn-b ui-shadow ui-corner-all">4</a></td>
+                <td><a class="digit ui-link ui-btn ui-btn-b ui-shadow ui-corner-all">5</a></td>
+                <td><a class="digit ui-link ui-btn ui-btn-b ui-shadow ui-corner-all">6</a></td>
+                <td><a class="clear ui-link ui-btn ui-btn-e ui-shadow ui-corner-all">Clear</a></td>
             </tr>
             <tr>
-                <td><a data-role="button" data-theme="b" class="digit">1</a></td>
-                <td><a data-role="button" data-theme="b" class="digit">2</a></td>
-                <td><a data-role="button" data-theme="b" class="digit">3</a></td>
-                <td><a data-role="button" data-theme="e">&nbsp;</a></td>
+                <td><a class="digit ui-link ui-btn ui-btn-b ui-shadow ui-corner-all">1</a></td>
+                <td><a class="digit ui-link ui-btn ui-btn-b ui-shadow ui-corner-all">2</a></td>
+                <td><a class="digit ui-link ui-btn ui-btn-b ui-shadow ui-corner-all">3</a></td>
+                <td><a class="digit ui-link ui-btn ui-btn-e ui-shadow ui-corner-all">&nbsp;</a></td>
             </tr>
             <tr>
-                <td><a data-role="button" data-theme="e" class="decimal">.</a></td>
-                <td><a data-role="button" data-theme="b" class="zero">0</a></td>
-                <td><a data-role="button" data-theme="e" class="">&nbsp;</a></td>
-                <td><a data-role="button" data-theme="e" class="done">Done</a></td>
+                <td><a class="decimal ui-link ui-btn ui-btn-e ui-shadow ui-corner-all">.</a></td>
+                <td><a class="zero ui-link ui-btn ui-btn-b ui-shadow ui-corner-all">0</a></td>
+                <td><a class="digit ui-link ui-btn ui-btn-e ui-shadow ui-corner-all">&nbsp;</a></td>
+                <td><a class="done ui-link ui-btn ui-btn-e ui-shadow ui-corner-all">Done</a></td>
             </tr>
         </table>
 
-        <div id="navbar" data-role="navbar">
+        <div id="entry-buttons" data-role="navbar">
             <ul>
-                <li><a href="#" id="btn-save" data-icon="check">Save</a></li>
-                <li><a href="#" id="btn-add" data-icon="plus">Add</a></li>
-                <li><a href="#" id="btn-prev" data-icon="arrow-u">Previous</a></li>
-                <li><a href="#" id="btn-next" data-icon="arrow-d">Next</a></li>
+                <li><a href="#" id="btn-save" class="ui-btn ui-btn-icon-top ui-icon-check">Save</a></li>
+                <li><a href="#" id="btn-add"  class="ui-btn ui-btn-icon-top ui-icon-plus">Add</a></li>
+                <li><a href="#" id="btn-prev" class="ui-btn ui-btn-icon-top ui-icon-arrow-u">Previous</a></li>
+                <li><a href="#" id="btn-next" class="ui-btn ui-btn-icon-top ui-icon-arrow-d">Next</a></li>
             </ul>
         </div>
         <div id='footer-bottom' class="center">
             <span id="status"></span>&nbsp;&nbsp;
-            <span id="version">v${project.version}-${buildNumber}</span>&nbsp;&nbsp;
+            <span id="version">v${buildNumber}</span>&nbsp;&nbsp;
             <span id="userinfo"></span>
             <span id="signin"><a href="#">signin</a></span>
-            <span id="syncinfo">offline</span>
+            <span id="syncinfo" class="red"></span>
         </div>
     </div>
     <!-- /footer -->
+
+</div>
+<!-- /page -->
+
+
+<!-- ************* Data Log Page *******************-->
+
+<div id="bmlog" data-role="page" data-theme="a">
+
+    <div id="header" data-role="header" data-theme="a">
+        <h1 id="log-title">Log</h1>
+        <div data-role="navbar" data-iconpos="left">
+            <ul>
+                <li><a href="#bmentry" data-icon="edit">Entry</a></li>
+                <li><a href="#bmlog" data-icon="bullets" class="ui-btn-active ui-state-persist">Log</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="log-content" data-role="content">
+
+    </div>
+
+    <div id="footer" data-role="footer" data-position="fixed" data-theme="a">
+    </div>
 
 </div>
 <!-- /page -->

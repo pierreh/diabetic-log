@@ -2,9 +2,12 @@ package org.diabeticlog.api;
 
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.Named;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.oauth.OAuthRequestException;
 import com.google.appengine.api.users.User;
 import model.ModelStore;
+
+import java.util.Date;
 
 @Api(
       name = Constants.API_NAME,
@@ -22,6 +25,10 @@ public class SyncApi {
       }
       modelStore.storeDay(day, user);
       return new ResultVo();
+   }
+
+   public DayVo getDay(@Named("day") String day) throws EntityNotFoundException {
+      return modelStore.getDay(day);
    }
 
    public User getUsername(User user) throws OAuthRequestException {

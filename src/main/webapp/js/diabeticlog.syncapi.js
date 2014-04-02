@@ -6,7 +6,6 @@
 
   var api = dl.syncApi = dl.syncApi || {}
 
-
   api.getVersion = function (callback) {
     getApi().getVersion().execute(function (response) {
       if (!response.code) {
@@ -32,16 +31,23 @@
       return;
     }
     var nr = queue.push(key);
+    dl.syncstate(++synccount);
     updateSyncQueue(queue);
     console.log('key added to syncqueue: ' + key);
     console.log('nr keys in syncqueue: ' + nr);
     // TODO send nr in queue event
   }
 
+  api.getSyncCount = function() {
+    return synccount;
+  }
+
   var syncQueueKey = dl.appname + '.syncQueue';
   var activeSyncQueueKey = dl.appname + '.activeSyncQueue';
   var syncTimer = null;
   var syncInProgress = false;
+  var synccount = getSyncQueue().length + getActiveSyncQueue().length;
+
 
   function getApi() {
     return gapi.client.dl.syncApi;
@@ -49,6 +55,7 @@
 
   function startSyncing() {
     if (!syncTimer) {
+      dl.syncstate(synccount);
       syncTimer = setInterval(syncTimeout, 5000);
     }
   }
@@ -99,6 +106,7 @@
   function syncTimeout() {
     if (isReadyToSync()) {
       syncInProgress = true;
+      dl.syncstate("syncing");
       var q = getSyncQueue();
       updateActiveSyncQueue(q);
       updateSyncQueue([]);
@@ -108,7 +116,7 @@
 
   function localDay2ServerDay(key) {
     var o = JSON.parse(localStorage[key]);
-    o.date = new Date(key.split(".").pop());
+    o.date = key.split(".").pop();
     return o;
   }
 
@@ -117,12 +125,13 @@
     var q = getActiveSyncQueue();
     if (q.length == 0) {
       if (syncInProgress) {
-        // TODO send event
+        dl.syncstate("secured");
       }
       syncInProgress = false;
+      synccount = getSyncQueue().length;
+      dl.syncstate(synccount);
       return;
     }
-    // TODO send nr in queue event
 
     var key = q[0];
     if (key in localStorage) {
@@ -132,6 +141,8 @@
           // day successfully stored
           console.log(key + " synced to server");
           q.shift();
+          dl.syncstate(--synccount);
+          dl.syncstate(q.length);
           updateActiveSyncQueue(q);
           syncDaysRecursive();
         } else {
@@ -146,6 +157,7 @@
       // key not available in local storage, try the next one
       console.warn("Failed to find key in localstorage: " + key);
       q.shift();
+      dl.syncstate(--synccount);
       updateActiveSyncQueue(q);
       syncDaysRecursive();
     }

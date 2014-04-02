@@ -62,6 +62,7 @@
   function appCacheOnline(e) {
     console.log("ApplicationCache online (" + e.type + ")");
     dl._online = true;
+    dl.syncstate("not-signed-in");
     loadGoogleApi();
   }
 
@@ -75,7 +76,14 @@
     dl._online = false;
     signedOut();
     $('#signin').hide();
-    $("#syncinfo").html("offline");
+    dl.syncstate("offline");
+    $('#userinfo')
+      .html("offline")
+      .show();
+  }
+
+  _wnd.isNumeric = function(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
   $(_doc).ready(function () {
@@ -84,9 +92,9 @@
 
     $('#signin')
       .click(function () {
-        diabeticlog.authorize(function () {
-          if (diabeticlog.isSignedIn()) {
-            signedIn(diabeticlog.getUserinfo());
+        dl.authorize(function () {
+          if (dl.isSignedIn()) {
+            signedIn(dl.getUserinfo());
           } else {
             signedOut();
           }
@@ -96,23 +104,18 @@
 
     _wnd.gapiInit = function() {
       console.debug("Google Client API loaded");
-      diabeticlog.initApi(function () {
+      dl.initApi(function () {
         console.log("API initialized");
         $('#signin').show();
-        if (diabeticlog.isSignedIn()) {
-          $("#syncinfo").html("online");
-          signedIn(diabeticlog.getUserinfo());
+        if (dl.isSignedIn()) {
+          dl.syncstate("signed-in")
+          signedIn(dl.getUserinfo());
         } else {
-          $("#syncinfo").html("not signed in");
+          dl.syncstate("not-signed-in")
           signedOut();
         }
       });
     }
-
-    setTimeout(function () {
-      // Hide the address bar!
-      _wnd.scrollTo(0, 1);
-    }, 0);
 
     $(_wnd.applicationCache)
       .on("error", appCacheOffline)
@@ -124,6 +127,13 @@
 //      .on("progress", appCacheEventHandler)
       .on("updateready", appCacheEventHandler)
     ;
+
+    setTimeout(function () {
+      // Hide the address bar!
+      _wnd.scrollTo(0, 1);
+    }, 0);
+
+    dl.syncstate(dl.syncApi.getSyncCount());
 
   }); // -- document.ready
 

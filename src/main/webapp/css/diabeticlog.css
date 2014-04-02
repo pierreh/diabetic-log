@@ -15,3 +15,44 @@
     user-select:none;
     -webkit-tap-highlight-color:rgba(0,0,0,0);
 }
+
+#entry-buttons {
+    padding: 0px;
+    margin: 0px;
+}
+
+#n_keypad a {
+    display: block;
+}
+
+#syncinfo {
+    float: right;
+    display: inline-block;
+    margin-top: 3px;
+    margin-right: 5px;
+    border-radius: 24px;
+    border-style: solid;
+    width: 12px;
+    height: 12px;
+    font-size: 10px;
+}
+#syncinfo.offline {
+    background-color: red;
+    border-color: red;
+}
+#syncinfo.secured {
+    background-color: green;
+    border-color: green;
+}
+#syncinfo.signed-in {
+    background-color: orange;
+    border-color: orange;
+}
+#syncinfo.not-signed-in {
+    background-color: orange;
+    border-color: orange;
+}
+#syncinfo.syncing {
+    background-color: deepskyblue;
+    border-color: deepskyblue;
+}
