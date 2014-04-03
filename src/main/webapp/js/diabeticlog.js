@@ -31,7 +31,39 @@
     };
   });
 
+  _wnd.isNumeric = function(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  }
+
+  // ------------- Event Triggers ----------------------
+
+  dl.syncstate = function(s) {
+    $(dl).trigger({ type:"syncstate", state:s });
+  }
+
   //=======================================================================
+
+
+  dl.offline = function() {
+    dl._online = false;
+    $('#signin').hide();
+    dl.syncstate("offline");
+    $('#userinfo')
+      .html("offline")
+      .show();
+  }
+
+  dl.online = function() {
+    $('#signin').show();
+    dl._online = true;
+    if (dl.isSignedIn()) {
+      dl.syncstate("signed-in")
+      signedIn(dl.getUserinfo());
+    } else {
+      dl.syncstate("not-signed-in")
+      signedOut();
+    }
+  }
 
 
   function signedIn(userinfo) {
@@ -71,19 +103,10 @@
     _wnd.location.reload();
   }
 
+
   function appCacheOffline() {
     console.log("ApplicationCache offline");
-    dl._online = false;
-    signedOut();
-    $('#signin').hide();
-    dl.syncstate("offline");
-    $('#userinfo')
-      .html("offline")
-      .show();
-  }
-
-  _wnd.isNumeric = function(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
+    dl.offline();
   }
 
   $(_doc).ready(function () {
@@ -106,14 +129,7 @@
       console.debug("Google Client API loaded");
       dl.initApi(function () {
         console.log("API initialized");
-        $('#signin').show();
-        if (dl.isSignedIn()) {
-          dl.syncstate("signed-in")
-          signedIn(dl.getUserinfo());
-        } else {
-          dl.syncstate("not-signed-in")
-          signedOut();
-        }
+        dl.online();
       });
     }
 

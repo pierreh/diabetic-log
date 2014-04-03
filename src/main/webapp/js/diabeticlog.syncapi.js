@@ -103,14 +103,48 @@
     return syncInProgress == false && dl.isOnline() && dl.isApiInitialized() && dl.isSignedIn();
   }
 
+  function hasLostConnection() {
+    return syncInProgress == false && !dl.isOnline() && dl.isApiInitialized() && dl.isSignedIn();
+  }
+
+  function pingServer() {
+    if (syncInProgress || !dl.isApiInitialized()) {
+      return;
+    }
+    syncInProgress = true;
+    var isonline = dl.isOnline();
+    getApi().getVersion().execute(function(response) {
+      syncInProgress = false;
+      if (!response.code) {
+        if (!isonline) {
+          // we're back!
+          dl.online();
+        }
+      } else {
+        if (isonline) {
+          dl.offline();
+        }
+      }
+    });
+  }
+
   function syncTimeout() {
     if (isReadyToSync()) {
-      syncInProgress = true;
-      dl.syncstate("syncing");
       var q = getSyncQueue();
-      updateActiveSyncQueue(q);
-      updateSyncQueue([]);
-      syncDaysRecursive();
+      if (q.length == 0) {
+        dl.syncstate("secured");
+        // check online status
+        pingServer();
+      } else {
+        syncInProgress = true;
+        dl.syncstate("syncing");
+        updateActiveSyncQueue(q);
+        updateSyncQueue([]);
+        syncDaysRecursive();
+      }
+    } else if (dl.isApiInitialized()) {
+      // check online status
+      pingServer();
     }
   }
 
@@ -142,15 +176,23 @@
           console.log(key + " synced to server");
           q.shift();
           dl.syncstate(--synccount);
-          dl.syncstate(q.length);
           updateActiveSyncQueue(q);
           syncDaysRecursive();
         } else {
-          console.error("Failed to store day: " + key);
+          console.error("Failed to store day: " + key + " message: " + response.message);
           // try again later
-          updateSyncQueue(getActiveSyncQueue().concat(getSyncQueue()));
+          var rq = getActiveSyncQueue().concat(getSyncQueue());
+          updateSyncQueue(rq);
           updateActiveSyncQueue([]);
+          synccount = rq.length;
+          dl.syncstate(synccount);
           syncInProgress = false;
+          if (response.code >= 400 && response.code <= 503) {
+            // some kind of servererror
+          } else {
+            // seems like we are offline
+            dl.offline();
+          }
         }
       });
     } else {

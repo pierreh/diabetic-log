@@ -75,20 +75,20 @@
     updateForm();
   }
 
-  dl.syncstate = function(s) {
-    if (isNumeric(s)) {
-      if (s == 0) {
+  $(dl).on("syncstate", function(e) {
+    if (isNumeric(e.state)) {
+      if (e.state == 0) {
         $("#syncinfo").html("");
       } else {
-        $("#syncinfo").html(s);
+        $("#syncinfo").html(e.state);
       }
-    } else if (s === "blink") {
+    } else if (e.state === "blink") {
 
     } else {
-      $("#syncinfo").removeClass().addClass(s);
+      $("#syncinfo").removeClass().addClass(e.state);
     }
     return dl.syncstate;
-  }
+  });
 
 
   $(_doc).delegate("#bmentry", "pageinit", function () {
