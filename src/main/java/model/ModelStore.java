@@ -46,11 +46,17 @@ public class ModelStore {
       }
    }
 
-   public DayVo getDay(String date) throws EntityNotFoundException {
-      Entity dayEnt = datastore.get(KeyFactory.createKey(DayVo.ENTITY_KIND, date));
+   public DayVo getDay(String date, User user) throws EntityNotFoundException {
+      NamespaceManager.set(user.getUserId());
+      Entity dayEnt = null;
+      try {
+         dayEnt = datastore.get(KeyFactory.createKey(DayVo.ENTITY_KIND, date));
+      } catch (EntityNotFoundException e) {
+         return null;
+      }
       DayVo dayVo = new DayVo();
       dayVo.setDate(date);
-      Query q = new Query(DayVo.ENTITY_KIND).setAncestor(dayEnt.getKey());
+      Query q = new Query(EntryVo.ENTITY_KIND).setAncestor(dayEnt.getKey());
       for (Entity entryEnt : datastore.prepare(q).asIterable()) {
          EntryVo e = new EntryVo();
          e.setTime((String) entryEnt.getProperty(EntryVo.PROPERTY_TIME));

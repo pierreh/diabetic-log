@@ -6,29 +6,9 @@
 
   var current = null;
 
-  var months = new Array();
-  months[0] = "January";
-  months[1] = "February";
-  months[2] = "March";
-  months[3] = "April";
-  months[4] = "May";
-  months[5] = "June";
-  months[6] = "July";
-  months[7] = "August";
-  months[8] = "September";
-  months[9] = "October";
-  months[10] = "November";
-  months[11] = "December";
+  var months = dl.months;
 
-  var days = [
-    "Monday",
-    "Thuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday"
-  ];
+  var days = dl.days;
 
 
   function fieldUpdate($element, name, value) {
@@ -90,7 +70,6 @@
     return dl.syncstate;
   });
 
-
   $(_doc).delegate("#bmentry", "pageinit", function () {
     if (!dl.hasLocalStorage()) {
       alert('no storage available');
@@ -149,7 +128,6 @@
 
     $('#btn-save').click(function () {
       current.store();
-      dl.syncApi.getQ
       if (current.entries.length == 0) {
         current.add();
       }

@@ -1,5 +1,6 @@
 package org.diabeticlog.api;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,7 +9,7 @@ public class DayVo {
    public static final String ENTITY_KIND = "Day";
 
    private String date;
-   private List<EntryVo> entries;
+   private List<EntryVo> entries = new ArrayList<EntryVo>();
 
    public String getDate() {
       return date;

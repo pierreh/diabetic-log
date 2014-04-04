@@ -35,14 +35,24 @@
     return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
+  _wnd.loadScript = function(src) {
+    var script = _doc.createElement( 'script' );
+    script.type = 'text/javascript';
+    script.src = src;
+    $(_doc.body).append(script);
+  }
+
   // ------------- Event Triggers ----------------------
 
   dl.syncstate = function(s) {
     $(dl).trigger({ type:"syncstate", state:s });
   }
 
-  //=======================================================================
+  // ------------- Helpers ----------------------
 
+  dl.showMessage = function(msg) {
+    $("#message").html(msg).show();
+  }
 
   dl.offline = function() {
     dl._online = false;
@@ -56,15 +66,52 @@
   dl.online = function() {
     $('#signin').show();
     dl._online = true;
-    if (dl.isSignedIn()) {
-      dl.syncstate("signed-in")
-      signedIn(dl.getUserinfo());
+    if (dl.isApiInitialized()) {
+      if (dl.isSignedIn()) {
+        dl.syncstate("signed-in")
+        signedIn(dl.getUserinfo());
+      } else {
+        dl.syncstate("not-signed-in")
+        signedOut();
+      }
     } else {
-      dl.syncstate("not-signed-in")
-      signedOut();
+      dl.loadGoogleApi();
     }
   }
 
+  var googleApiLoaded = false;
+  dl.loadGoogleApi = function() {
+    if (googleApiLoaded) {
+      return;
+    }
+    googleApiLoaded = true;
+    console.debug("Loading Google Client API...");
+    loadScript("https://apis.google.com/js/client.js?onload=gapiInit");
+  }
+
+  dl.months = new Array();
+  dl.months[0] = "January";
+  dl.months[1] = "February";
+  dl.months[2] = "March";
+  dl.months[3] = "April";
+  dl.months[4] = "May";
+  dl.months[5] = "June";
+  dl.months[6] = "July";
+  dl.months[7] = "August";
+  dl.months[8] = "September";
+  dl.months[9] = "October";
+  dl.months[10] = "November";
+  dl.months[11] = "December";
+
+  dl.days = [
+    "Monday",
+    "Thuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ];
 
   function signedIn(userinfo) {
     $('#userinfo')
@@ -78,36 +125,68 @@
     $('#signin').show();
   }
 
-  function loadGoogleApi() {
-    console.debug("Loading Google Client API...");
-    var script = document.createElement( 'script' );
-    script.type = 'text/javascript';
-    script.src = "https://apis.google.com/js/client.js?onload=gapiInit";
-    $("body").append(script);
+  // ----------------- AppCache ----------------
+
+
+  var appCacheUpdateTimer;
+
+
+  dl.showDialog = function(content) {
+
+    $("#popupDialog").find(".content").html(content);
+    $('#openPopup').click();
   }
 
+  function initAppCache() {
+
+    $(_wnd.applicationCache)
+      .on("error", appCacheOffline)
+      .on("obsolete", appCacheObsolete)
+      .on("noupdate", appCacheOnline)
+      .on("cached", appCacheOnline)
+//      .on("checking", appCacheEventHandler)
+//      .on("downloading", appCacheEventHandler)
+//      .on("progress", appCacheEventHandler)
+//      .on("updateready", appCacheUpdateReady)
+    ;
+
+    var shownBD = false;
+
+    appCacheUpdateTimer = setInterval(function() {
+      _wnd.applicationCache.update();
+
+      if (!shownBD && new Date().toDateField() === "2014-04-05") {
+        shownBD = true;
+        setTimeout(function() {
+          dl.showDialog('<img class="popphoto" src="images/white_lotus.jpg" style="width:100%;" alt="Happy Birthday!">' +
+            '<div class="text">Happy Birthday! XXX</div>');
+        }, 100);
+      }
+    }, 5000);
+
+  }
 
   function appCacheEventHandler(e) {
     console.log("ApplicationCache event: " + e.type);
   }
 
   function appCacheOnline(e) {
-    console.log("ApplicationCache online (" + e.type + ")");
-    dl._online = true;
-    dl.syncstate("not-signed-in");
-    loadGoogleApi();
+    if (!dl.isOnline()) {
+      console.debug("ApplicationCache online (" + e.type + ")");
+      dl.online();
+    }
   }
 
   function appCacheObsolete() {
-    console.log("ApplicationCache obsolete");
-    _wnd.location.reload();
+    clearInterval(appCacheUpdateTimer);
+    dl.showMessage("There is a new version available. <a href='#' onClick='location.reload()'>reload</a>");
   }
-
 
   function appCacheOffline() {
-    console.log("ApplicationCache offline");
     dl.offline();
   }
+
+  // -------------------- Page Init ----------------------
 
   $(_doc).ready(function () {
 
@@ -133,16 +212,7 @@
       });
     }
 
-    $(_wnd.applicationCache)
-      .on("error", appCacheOffline)
-      .on("obsolete", appCacheObsolete)
-      .on("noupdate", appCacheOnline)
-      .on("cached", appCacheOnline)
-//      .on("checking", appCacheEventHandler)
-//      .on("downloading", appCacheEventHandler)
-//      .on("progress", appCacheEventHandler)
-      .on("updateready", appCacheEventHandler)
-    ;
+    initAppCache();
 
     setTimeout(function () {
       // Hide the address bar!

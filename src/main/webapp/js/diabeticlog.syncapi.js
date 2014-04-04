@@ -33,14 +33,27 @@
     var nr = queue.push(key);
     dl.syncstate(++synccount);
     updateSyncQueue(queue);
-    console.log('key added to syncqueue: ' + key);
-    console.log('nr keys in syncqueue: ' + nr);
+    console.debug('key added to syncqueue: ' + key);
+    console.debug('nr keys in syncqueue: ' + nr);
     // TODO send nr in queue event
   }
 
   api.getSyncCount = function() {
     return synccount;
   }
+
+  api.getDay = function(daykey, callback) {
+    getApi().getDay({day: daykey}).execute(function(response){
+      if (!response) {
+        callback();
+      } else if (!response.code) {
+        callback(response.result);
+      } else {
+        console.error(response.message);
+      }
+    });
+  }
+
 
   var syncQueueKey = dl.appname + '.syncQueue';
   var activeSyncQueueKey = dl.appname + '.activeSyncQueue';
@@ -103,38 +116,11 @@
     return syncInProgress == false && dl.isOnline() && dl.isApiInitialized() && dl.isSignedIn();
   }
 
-  function hasLostConnection() {
-    return syncInProgress == false && !dl.isOnline() && dl.isApiInitialized() && dl.isSignedIn();
-  }
-
-  function pingServer() {
-    if (syncInProgress || !dl.isApiInitialized()) {
-      return;
-    }
-    syncInProgress = true;
-    var isonline = dl.isOnline();
-    getApi().getVersion().execute(function(response) {
-      syncInProgress = false;
-      if (!response.code) {
-        if (!isonline) {
-          // we're back!
-          dl.online();
-        }
-      } else {
-        if (isonline) {
-          dl.offline();
-        }
-      }
-    });
-  }
-
   function syncTimeout() {
     if (isReadyToSync()) {
       var q = getSyncQueue();
       if (q.length == 0) {
         dl.syncstate("secured");
-        // check online status
-        pingServer();
       } else {
         syncInProgress = true;
         dl.syncstate("syncing");
@@ -142,9 +128,6 @@
         updateSyncQueue([]);
         syncDaysRecursive();
       }
-    } else if (dl.isApiInitialized()) {
-      // check online status
-      pingServer();
     }
   }
 

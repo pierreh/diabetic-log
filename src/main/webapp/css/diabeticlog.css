@@ -56,3 +56,43 @@
     background-color: deepskyblue;
     border-color: deepskyblue;
 }
+
+#message {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    background-color: lightgrey;
+    text-align: center;
+    display: none;
+    z-index: 100;
+}
+#message a {
+    color: red;
+}
+
+#popupDialog {
+    z-index: 100;
+}
+#popupDialog .content {
+    display: inline-block;
+}
+#popupDialog .content .text {
+    position: absolute;
+    top: 50px;
+    text-align: center;
+    width: 100%;
+}
+
+#log-content li.daynav,
+#log-content li.daynav a,
+#log-content li.daynav p {
+    background-color: #e9e9e9;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0px;
+}
+
+#log-content li.daynav a {
+    padding: .5em 1.143em;
+    padding-right: 2.8125em;
+}

@@ -29,12 +29,21 @@
 
 
 </head>
-<body>
+<body id="pagecontainer">
 
+<div id="message"></div>
+
+<div data-role="popup" id="popupDialog" data-overlay-theme="b" data-theme="b" data-corners="false">
+    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+    <div class="content">Hello</div>
+</div>
+
+<a id="openPopup" href="#popupDialog"></a>
 
 <!-- ************* Data Entry Page *******************-->
 
 <div id="bmentry" data-role="page" data-theme="a">
+
 
     <div id="header" data-role="header" data-theme="a">
         <h1 id="entry-title"></h1>
@@ -51,6 +60,8 @@
     <!-- /header -->
 
     <div data-role="content">
+
+
         <!--<label for="date" class="ui-hidden-accessible">Date</label>
         <input type='date' name='date' disabled/>-->
         <!--<div class="fieldcontain">
@@ -142,8 +153,9 @@
 
 <div id="bmlog" data-role="page" data-theme="a">
 
-    <div id="header" data-role="header" data-theme="a">
+    <div id="logheader" data-role="header" data-theme="a">
         <h1 id="log-title">Log</h1>
+        <a href="#" id="btn-log-today" data-icon="arrow-r" class="ui-btn-right">Later</a>
         <div data-role="navbar" data-iconpos="left">
             <ul>
                 <li><a href="#bmentry" data-icon="edit" data-transition="flip">Entry</a></li>
@@ -153,10 +165,12 @@
     </div>
 
     <div id="log-content" data-role="content">
+        <ul data-role="listview">
 
+        </ul>
     </div>
 
-    <div id="footer" data-role="footer" data-position="fixed" data-theme="a">
+    <div id="logfooter" data-role="footer" data-position="fixed" data-theme="a">
     </div>
 
 </div>
