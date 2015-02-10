@@ -44,7 +44,7 @@
     var beforeDate = new Date(currentDate);
     beforeDate.setDate(beforeDate.getDate() - 1);
     html += '<li data-icon="carat-u" class="daynav"><a href="#" onClick="diabeticlog.logGoToPrevious()"><p>'+beforeDate.toDateField() + '</p></a></li>';
-    if (day) {
+    if (day && day.entries) {
       html += '<li data-role="list-divider">'+day.date+'<span class="ui-li-count">'+day.entries.length+'</span></li>';
       $.each(day.entries, function(i,val) {
         html += "<li><a href='#'>";
@@ -76,6 +76,10 @@
       if (ui.toPage.attr("id") === "bmlog") {
         changeToDate(currentDate);
       }
+    });
+
+    $('#btn-log-today').click(function(){
+       changeToDate(new Date());
     });
 
     if (dl.isSignedIn()) {
