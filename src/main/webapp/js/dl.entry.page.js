@@ -80,13 +80,13 @@
       $('#footer-bottom').append('<div>[DEBUG MODE]</div>');
     }
 
-    $('#n_keypad').on('show', function() {
-      $("#entry-buttons").hide();
-    });
-
-    $('#n_keypad').on('hide', function() {
-      $("#entry-buttons").show();
-    });
+//    $('#n_keypad').on('show', function() {
+//      $("#entry-buttons").hide();
+//    });
+//
+//    $('#n_keypad').on('hide', function() {
+//      $("#entry-buttons").show();
+//    });
 
     $('#btn-earlier').click(function () {
       var currentDate = new Date(current.date);
